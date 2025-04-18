@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalyst Optimizer - AI Powered Chemical Reaction Optimization</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4FD1C5;
+            --secondary: #38B2AC;
+            --dark: #0E1117;
+            --darker: #090B10;
+            --medium-dark: #1E2030;
+            --light: #2E3440;
+            --text-light: #E2E8F0;
+            --text-accent: #63B3ED;
+            --text-muted: #A0AEC0;
+            --success: #48BB78;
+            --warning: #ECC94B;
+            --danger: #F56565;
+            --gradient-start: #4FD1C5;
+            --gradient-end: #63B3ED;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: var(--darker);
+            color: var(--text-light);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            font-size: 1.8rem;
+        }
+        
+        .try-button {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: var(--darker);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .try-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 209, 197, 0.4);
+        }
+        
+        .hero {
+            padding: 160px 0 80px;
+            background: linear-gradient(rgba(14, 17, 23, 0.8), rgba(14, 17, 23, 0.95)), 
+                        url('/api/placeholder/1200/600') center/cover no-repeat;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--text-light);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            color: var(--text-muted);
+        }
+        
+        .hero-try-button {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: var(--darker);
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hero-try-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(79, 209, 197, 0.5);
+        }
+        
+        .problems {
+            padding: 80px 0;
+            background-color: var(--medium-dark);
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .section-title p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .problems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .problem-card {
+            background-color: var(--light);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(79, 209, 197, 0.1);
+        }
+        
+        .problem-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            border-color: rgba(79, 209, 197, 0.3);
+        }
+        
+        .problem-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .solution {
+            padding: 80px 0;
+            background-color: var(--darker);
+            position: relative;
+        }
+        
+        .solution-content {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            margin-top: 50px;
+        }
+        
+        .solution-image {
+            flex: 1;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(79, 209, 197, 0.2);
+        }
+        
+        .solution-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .solution-text {
+            flex: 1;
+        }
+        
+        .solution-text h3 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 25px;
+        }
+        
+        .feature-icon {
+            color: var(--gradient-start);
+            font-size: 1.5rem;
+            margin-right: 15px;
+            margin-top: 5px;
+        }
+        
+        .feature-text h4 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            color: var(--text-accent);
+        }
+        
+        .feature-text p {
+            color: var(--text-muted);
+        }
+        
+        .how-it-works {
+            padding: 80px 0;
+            background-color: var(--medium-dark);
+        }
+        
+        .steps {
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+        
+        .steps::before {
+            content: '';
+            position: absolute;
+            top: 50px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            z-index: 1;
+            opacity: 0.5;
+        }
+        
+        .step {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            width: 20%;
+        }
+        
+        .step-number {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: var(--darker);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 auto 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+        
+        .step h4 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: var(--text-accent);
+        }
+        
+        .step p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        
+        .call-to-action {
+            padding: 80px 0;
+            background: linear-gradient(135deg, rgba(79, 209, 197, 0.1), rgba(99, 179, 237, 0.1));
+            color: var(--text-light);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .call-to-action::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--darker);
+            z-index: -1;
+        }
+        
+        .call-to-action h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .call-to-action p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            color: var(--text-muted);
+        }
+        
+        .cta-button {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: var(--darker);
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(79, 209, 197, 0.5);
+        }
+        
+        footer {
+            background-color: var(--darker);
+            color: var(--text-light);
+            padding: 50px 0 20px;
+            border-top: 1px solid rgba(79, 209, 197, 0.1);
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+        
+        .footer-column {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-column h3 {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-column ul li a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-column ul li a:hover {
+            color: var(--primary);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+        }
+        
+        /* Animated elements */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        
+        .fade-in.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Media Queries */
+        @media (max-width: 992px) {
+            .solution-content {
+                flex-direction: column;
+            }
+            
+            .steps {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .steps::before {
+                display: none;
+            }
+            
+            .step {
+                width: 100%;
+                max-width: 300px;
+                margin-bottom: 40px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+        }
+        
+        /* Animation for molecules */
+        .molecules-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .molecule {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.2;
+            animation: float 20s infinite linear;
+            box-shadow: 0 0 20px 5px rgba(79, 209, 197, 0.3);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--dark);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+        
+        /* Glow effects */
+        .glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: var(--primary);
+            filter: blur(100px);
+            opacity: 0.1;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-flask"></i>
+                    <span>Catalyst Optimizer</span>
+                </div>
+                <button class="try-button" onclick="redirectToApp()">Try It Now</button>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="molecules-container" id="molecules"></div>
+        <div class="glow" style="top: -150px; left: 10%;"></div>
+        <div class="glow" style="bottom: -150px; right: 10%; background: var(--text-accent);"></div>
+        <div class="container">
+            <h1 class="fade-in">AI-Powered Catalyst Optimization</h1>
+            <p class="fade-in">Revolutionize your chemical reactions with our advanced machine learning solution that predicts the optimal catalyst for any given reaction, saving time, money, and resources.</p>
+            <button class="hero-try-button fade-in" onclick="redirectToApp()">Try It Now</button>
+        </div>
+    </section>
+
+    <section class="problems">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>Industry Challenges</h2>
+                <p>Chemical manufacturers face significant obstacles when selecting the right catalyst for their processes</p>
+            </div>
+            
+            <div class="problems-grid">
+                <div class="problem-card fade-in">
+                    <div class="problem-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Time-Consuming Experimentation</h3>
+                    <p>Traditional catalyst selection requires extensive laboratory testing across numerous candidates, consuming weeks or even months of valuable research time.</p>
+                </div>
+                
+                <div class="problem-card fade-in">
+                    <div class="problem-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <h3>High Research Costs</h3>
+                    <p>Catalyst experimentation demands expensive equipment, specialized personnel, and costly materials, making innovation prohibitively expensive for many companies.</p>
+                </div>
+                
+                <div class="problem-card fade-in">
+                    <div class="problem-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3>Unpredictable Outcomes</h3>
+                    <p>Even with extensive experience, predicting catalyst performance for novel reactions remains challenging, leading to inefficient processes and suboptimal yields.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="solution">
+        <div class="glow" style="top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>Our AI Solution</h2>
+                <p>Catalyst Optimizer leverages machine learning to transform how catalysts are selected</p>
+            </div>
+            
+            <div class="solution-content">
+                <div class="solution-image fade-in">
+                    <img src="https://www.immerse.education/wp-content/uploads/2023/01/What-are-three-reasons-for-studying-chemistry.jpg" alt="Catalyst Optimizer Dashboard">
+                </div>
+                
+                <div class="solution-text">
+                    <h3 class="fade-in">Why Choose Catalyst Optimizer?</h3>
+                    
+                    <div class="feature-item fade-in">
+                        <div class="feature-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h4>Rapid Predictions</h4>
+                            <p>Receive optimal catalyst recommendations in seconds instead of weeks, accelerating your research and development cycle.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item fade-in">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h4>Higher Success Rates</h4>
+                            <p>Our neural network model has been trained on thousands of reactions to provide accurate predictions with confidence scores.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item fade-in">
+                        <div class="feature-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h4>Parameter Optimization</h4>
+                            <p>Fine-tune temperature and pressure settings to maximize yield and selectivity for your specific reaction conditions.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item fade-in">
+                        <div class="feature-icon">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h4>Sustainable Chemistry</h4>
+                            <p>Reduce waste and environmental impact by selecting the most efficient catalysts for your processes from the start.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="how-it-works">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>How It Works</h2>
+                <p>Our simple process takes you from input to optimized catalyst in just a few clicks</p>
+            </div>
+            
+            <div class="steps">
+                <div class="step fade-in">
+                    <div class="step-number">1</div>
+                    <h4>Input Reactants</h4>
+                    <p>Enter your starting materials and desired product</p>
+                </div>
+                
+                <div class="step fade-in">
+                    <div class="step-number">2</div>
+                    <h4>Set Parameters</h4>
+                    <p>Specify temperature and pressure conditions</p>
+                </div>
+                
+                <div class="step fade-in">
+                    <div class="step-number">3</div>
+                    <h4>AI Analysis</h4>
+                    <p>Our model processes your inputs through its neural network</p>
+                </div>
+                
+                <div class="step fade-in">
+                    <div class="step-number">4</div>
+                    <h4>Get Results</h4>
+                    <p>Receive catalyst recommendations with confidence scores</p>
+                </div>
+                
+                <div class="step fade-in">
+                    <div class="step-number">5</div>
+                    <h4>Implement</h4>
+                    <p>Apply recommendations to your research or production</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="call-to-action">
+        <div class="glow" style="bottom: -150px; left: 30%;"></div>
+        <div class="glow" style="top: -150px; right: 30%; background: var(--text-accent);"></div>
+        <div class="container">
+            <h2 class="fade-in">Ready to Optimize Your Catalytic Processes?</h2>
+            <p class="fade-in">Join leading chemical manufacturers who have already increased their reaction efficiency by up to 40% with our AI solution.</p>
+            <button class="cta-button fade-in" onclick="redirectToApp()">Try It Now For Free</button>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Catalyst Optimizer</h3>
+                    <p>Revolutionizing chemical catalyst selection with artificial intelligence </p>
+                    <p>and machine learning.</p>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Case Studies</a></li>
+                        <li><a href="#">Research Papers</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Company</h3>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Blog</a></li>
+
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Connect</h3>
+                    <ul>
+                        <li><a href="https://x.com/saudshaikkhh?t=yf5AT-qOStxjpt2y4nrHdQ&s=08"><i class="fab fa-twitter"></i> X</a></li>
+                        <li><a href="https://www.linkedin.com/in/mohammed-saud-shaikh-1b1ab2297?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"><i class="fab fa-linkedin"></i> LinkedIn</a></li>
+                        <li><a href="https://github.com/Saudshaikkhh"><i class="fab fa-github"></i> GitHub</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2025 Catalyst Optimizer. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Function to redirect to the Streamlit app
+        function redirectToApp() {
+            // Replace this URL with your actual Streamlit deployment URL
+            window.location.href = "http://localhost:8501";
+        }
+        
+        // Animation for fade-in elements
+        document.addEventListener('DOMContentLoaded', function() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            fadeElements.forEach(element => {
+                observer.observe(element);
+            });
+            
+            // Create animated molecules in the background
+            createMolecules();
+        });
+        
+        // Function to create floating molecule animations
+        function createMolecules() {
+            const container = document.getElementById('molecules');
+            const colors = ['#4FD1C5', '#63B3ED', '#48BB78', '#ECC94B'];
+            const numberOfMolecules = 15;
+            
+            for (let i = 0; i < numberOfMolecules; i++) {
+                const molecule = document.createElement('div');
+                molecule.className = 'molecule';
+                
+                // Random properties
+                const size = Math.random() * 50 + 10;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const delay = Math.random() * 20;
+                const duration = Math.random() * 20 + 10;
+                
+                // Apply styles
+                molecule.style.width = size + 'px';
+                molecule.style.height = size + 'px';
+                molecule.style.backgroundColor = color;
+                molecule.style.left = posX + '%';
+                molecule.style.top = posY + '%';
+                molecule.style.animationDelay = delay + 's';
+                molecule.style.animationDuration = duration + 's';
+                
+                container.appendChild(molecule);
+            }
+        }
+        
+        // Animation for floating molecules
+        document.styleSheets[0].insertRule(`
+            @keyframes float {
+                0% {
+                    transform: translate(0, 0) rotate(0deg);
+                }
+                33% {
+                    transform: translate(100px, 100px) rotate(120deg);
+                }
+                66% {
+                    transform: translate(-100px, 50px) rotate(240deg);
+                }
+                100% {
+                    transform: translate(0, 0) rotate(360deg);
+                }
+            }
+        `, document.styleSheets[0].cssRules.length);
+    </script>
+</body>
+</html>
